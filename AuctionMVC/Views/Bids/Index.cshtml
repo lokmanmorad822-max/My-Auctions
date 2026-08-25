@@ -1,0 +1,95 @@
+@model BidIndexViewModel
+@{
+    ViewData["Title"] = "المزايدات";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "إدارة المزايدات",
+    Subtitle = "سجل جميع المزايدات المقدمة",
+    Icon = "bi-cash-coin"
+})
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    <div class="text-muted fs-7">
+        إجمالي المزايدات: <span class="fw-800">@Model.TotalCount.ToString("N0")</span>
+    </div>
+
+    <form method="get" class="d-flex align-items-center gap-2">
+        <div class="input-group input-group-sm" style="width: 300px">
+            <input type="text" name="auctionId" value="@Model.AuctionId" class="form-control" dir="ltr" placeholder="فلترة حسب معرف المزاد (GUID)..." />
+            <button type="submit" class="btn btn-soft-secondary">
+                <i class="bi bi-filter"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover admin-datatable mb-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>المزايد</th>
+                        <th>المزاد</th>
+                        <th>المبلغ</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon"><i class="bi bi-cash"></i></div>
+                                    <h6>لا توجد مزايدات</h6>
+                                    <p>لم يتم العثور على مزايدات مطابقة.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="width:2rem;height:2rem;font-size:0.7rem">@item.BidderInitials</div>
+                                        <span class="fw-bold">@item.BidderName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a asp-controller="Auctions" asp-action="Details" asp-route-id="@item.AuctionId"
+                                       class="text-decoration-none">
+                                        @item.AuctionProductName
+                                    </a>
+                                    <div class="fs-8 text-muted" dir="ltr">@item.AuctionId</div>
+                                </td>
+                                <td class="fw-bold text-primary"><currency amount="@item.Amount" /></td>
+                                <td class="text-muted fs-8">@item.CreatedAt.ToString("dd/MM/yyyy · HH:mm")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var hasData = @(Model.Items.Count > 0 ? "true" : "false");
+            if (!hasData) return;
+
+            AuctionDataTables.init(".admin-datatable", {
+                columnDefs: [{ targets: "no-sort", orderable: false }],
+                order: [[3, "desc"]]
+            });
+        })();
+    </script>
+}
+

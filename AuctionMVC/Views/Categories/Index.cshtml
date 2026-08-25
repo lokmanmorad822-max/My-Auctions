@@ -1,0 +1,72 @@
+@model CategoryIndexViewModel
+@{
+    ViewData["Title"] = "التصنيفات";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "التصنيفات",
+    Subtitle = "تصنيفات المنتجات المستخدمة في المنصة",
+    Icon = "bi-tags"
+})
+
+<div class="text-muted fs-7 mb-3">
+    إجمالي التصنيفات: <span class="fw-800 text-foreground">@Model.TotalCategories.ToString("N0")</span>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover admin-datatable mb-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>التصنيف</th>
+                        <th>عدد المنتجات</th>
+                        <th>المزادات المرتبطة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="3">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon"><i class="bi bi-tags"></i></div>
+                                    <h6>لا توجد تصنيفات</h6>
+                                    <p>لم يتم العثور على أي تصنيفات. أضف منتجات لبدء التصنيف.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    <span class="badge bg-soft-secondary fs-7">@item.Name</span>
+                                </td>
+                                <td><span class="badge bg-soft-info">@item.ProductCount</span></td>
+                                <td><span class="badge bg-soft-gold">@item.AuctionCount</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var hasData = @(Model.Items.Count > 0 ? "true" : "false");
+            if (!hasData) return;
+
+            AuctionDataTables.init(".admin-datatable", {
+                columnDefs: [{ targets: "no-sort", orderable: false }],
+                order: [[0, "asc"]]
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "خطأ";
+    var message = ViewData["Message"] as string ?? "حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.";
+}
+
+<div class="empty-state py-5 animate-fade-in-up">
+    <div class="empty-icon bg-soft-danger text-danger">
+        <i class="bi bi-exclamation-octagon"></i>
+    </div>
+    <h6>حدث خطأ</h6>
+    <p>@message</p>
+    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-sm px-3">
+        <i class="bi bi-arrow-right me-1"></i>العودة للوحة التحكم
+    </a>
+</div>
+

@@ -1,0 +1,115 @@
+@model AuctionIndexViewModel
+@{
+    ViewData["Title"] = "المزادات";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "إدارة المزادات",
+    Subtitle = "عرض، مراجعة، وإدارة جميع المزادات",
+    Icon = "bi-hammer",
+    ActionLabel = "إنشاء مزاد جديد",
+    ActionUrl = Url.Action("Create", "Auctions"),
+    ActionIcon = "bi-plus-lg"
+})
+
+<!-- Filter pills -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    @await Component.InvokeAsync("StatusFilter", new AuctionMVC.ViewComponents.StatusFilterModel
+    {
+        BaseUrl = Url.Action("Index", "Auctions"),
+        CurrentValue = Model.CurrentStatus,
+        Items = new[]
+        {
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "الكل", Value = "all", Count = Model.Counts.All },
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "قيد المراجعة", Value = "pending", Count = Model.Counts.Pending },
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "نشط", Value = "active", Count = Model.Counts.Active },
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "منتهي", Value = "finished", Count = Model.Counts.Finished },
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "متوقف", Value = "stopped", Count = Model.Counts.Stopped },
+            new AuctionMVC.ViewComponents.StatusFilterItem { Label = "مرفوض", Value = "rejected", Count = Model.Counts.Rejected }
+        }
+    })
+
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="status" value="@Model.CurrentStatus" />
+        <div class="input-group input-group-sm" style="width: 260px">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="بحث بالمنتج أو المالك..." />
+            <button type="submit" class="btn btn-soft-secondary">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Data table -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover admin-datatable mb-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>التصنيف</th>
+                        <th>المالك</th>
+                        <th>سعر البداية</th>
+                        <th>السعر الحالي</th>
+                        <th>المزايدات</th>
+                        <th>تاريخ الانتهاء</th>
+                        <th>الحالة</th>
+                        <th class="no-sort">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                                    <h6>لا توجد مزادات</h6>
+                                    <p>لم يتم العثور على مزادات مطابقة للمعايير.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">@item.ProductName</a>
+                                </td>
+                                <td><span class="badge bg-soft-secondary">@item.Category</span></td>
+                                <td>@item.OwnerName</td>
+                                <td><currency amount="@item.StartPrice" /></td>
+                                <td class="fw-bold text-primary"><currency amount="@item.CurrentPrice" /></td>
+                                <td><span class="badge bg-soft-info">@item.BidCount</span></td>
+                                <td class="text-muted fs-8">@item.EndDate.ToString("dd/MM/yyyy")</td>
+                                <td><status-badge status="@item.Status" /></td>
+                                <td>
+                                    <partial name="_AuctionActions" model="@item" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var hasData = @(Model.Items.Count > 0 ? "true" : "false");
+            if (!hasData) return;
+
+            var table = AuctionDataTables.init(".admin-datatable", {
+                columnDefs: [{ targets: "no-sort", orderable: false }],
+                order: [[6, "asc"]]
+            });
+        })();
+    </script>
+}
+
