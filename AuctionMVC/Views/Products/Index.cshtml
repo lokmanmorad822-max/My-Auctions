@@ -1,0 +1,128 @@
+@model ProductIndexViewModel
+@{
+    ViewData["Title"] = "المنتجات";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "إدارة المنتجات",
+    Subtitle = "المنتجات المرتبطة بالمزادات",
+    Icon = "bi-box-seam",
+    ActionLabel = "إنشاء منتج جديد",
+    ActionUrl = Url.Action("Create", "Products"),
+    ActionIcon = "bi-plus-lg"
+})
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    <!-- Category filter pills -->
+    <div class="filter-pills">
+        <a href="@Url.Action("Index", "Products", new { category = "all" })"
+           class="filter-pill @(Model.CurrentCategory == "all" ? "active" : "")">الكل</a>
+        @foreach (var cat in Model.Categories)
+        {
+            <a href="@Url.Action("Index", "Products", new { category = cat })"
+               class="filter-pill @(string.Equals(Model.CurrentCategory, cat, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                @cat
+            </a>
+        }
+    </div>
+
+    <form method="get" class="d-flex align-items-center gap-2">
+        <input type="hidden" name="category" value="@Model.CurrentCategory" />
+        <div class="input-group input-group-sm" style="width: 260px">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="بحث بالاسم أو الوصف..." />
+            <button type="submit" class="btn btn-soft-secondary">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover admin-datatable mb-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>التصنيف</th>
+                        <th>الوصف</th>
+                        <th>عدد المزادات</th>
+                        <th class="no-sort">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon"><i class="bi bi-box"></i></div>
+                                    <h6>لا توجد منتجات</h6>
+                                    <p>لم يتم العثور على منتجات مطابقة.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="fw-bold">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="gradient-thumb" style="width:2.5rem;height:2.5rem;border-radius:0.5rem">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                        <span>@item.Name</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-soft-secondary">@item.Category</span></td>
+                                <td class="text-muted fs-8 text-truncate" style="max-width:280px">
+                                    @item.Description
+                                </td>
+                                <td><span class="badge bg-soft-info">@item.AuctionCount</span></td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-soft-secondary btn-sm px-2 py-1" title="تعديل">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-soft-danger btn-sm px-2 py-1"
+                                                title="حذف"
+                                                data-confirm-action="@Url.Action("Delete", "Products", new { id = item.Id })"
+                                                data-confirm-method="POST"
+                                                data-confirm-title="حذف المنتج؟"
+                                                data-confirm-message="سيتم حذف المنتج نهائياً. تأكد من عدم ارتباطه بمزادات نشطة."
+                                                data-confirm-icon="bi-trash"
+                                                data-confirm-variant="danger"
+                                                data-confirm-text="حذف نهائي"
+                                                data-confirm-require-text="حذف">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var hasData = @(Model.Items.Count > 0 ? "true" : "false");
+            if (!hasData) return;
+
+            AuctionDataTables.init(".admin-datatable", {
+                columnDefs: [{ targets: "no-sort", orderable: false }],
+                order: [[0, "asc"]]
+            });
+        })();
+    </script>
+}
+

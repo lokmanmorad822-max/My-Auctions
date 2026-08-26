@@ -1,0 +1,68 @@
+@model AuctionListItemViewModel
+
+<div class="d-flex flex-wrap gap-1">
+    <!-- View -->
+    <a asp-action="Details" asp-route-id="@Model.Id"
+       class="btn btn-soft-secondary btn-sm px-2 py-1" title="عرض التفاصيل">
+        <i class="bi bi-eye"></i>
+    </a>
+
+    <!-- Edit (only for mutable states) -->
+    @if (Model.Status == AuctionStatus.Pending || Model.Status == AuctionStatus.Active)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id"
+           class="btn btn-soft-secondary btn-sm px-2 py-1" title="تعديل">
+            <i class="bi bi-pencil"></i>
+        </a>
+    }
+
+    <!-- Approve (moderation) -->
+    @if (Model.Status == AuctionStatus.Pending)
+    {
+        <form asp-action="Approve" asp-route-id="@Model.Id" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-soft-success btn-sm px-2 py-1" title="الموافقة">
+                <i class="bi bi-check-lg"></i>
+            </button>
+        </form>
+        <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-soft-danger btn-sm px-2 py-1" title="رفض">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </form>
+    }
+
+    <!-- Stop (gold confirm modal) -->
+    @if (Model.Status == AuctionStatus.Active)
+    {
+        <button type="button"
+                class="btn btn-soft-gold btn-sm px-2 py-1"
+                title="إيقاف المزاد"
+                data-confirm-action="@Url.Action("Stop", "Auctions", new { id = Model.Id })"
+                data-confirm-method="POST"
+                data-confirm-title="إيقاف المزاد؟"
+                data-confirm-message="سيتم إيقاف المزاد نهائياً ولن يُسمح بإضافة مزايدات جديدة."
+                data-confirm-icon="bi-stop-circle"
+                data-confirm-variant="gold"
+                data-confirm-text="تأكيد الإيقاف">
+            <i class="bi bi-stop-circle"></i>
+        </button>
+    }
+
+    <!-- Delete (destructive confirm modal with typed text) -->
+    <button type="button"
+            class="btn btn-soft-danger btn-sm px-2 py-1"
+            title="حذف المزاد"
+            data-confirm-action="@Url.Action("Delete", "Auctions", new { id = Model.Id })"
+            data-confirm-method="POST"
+            data-confirm-title="حذف المزاد؟"
+            data-confirm-message="هذا الإجراء نهائي ولا يمكن التراجع عنه. سيتم حذف المزاد وسجل مزايداته بشكل دائم."
+            data-confirm-icon="bi-trash"
+            data-confirm-variant="danger"
+            data-confirm-text="حذف نهائي"
+            data-confirm-require-text="حذف">
+        <i class="bi bi-trash"></i>
+    </button>
+</div>
+
