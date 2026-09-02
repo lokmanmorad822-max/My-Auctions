@@ -1,0 +1,17 @@
+@model AuctionMVC.ViewComponents.StatCardModel
+
+<div class="stat-card h-100 animate-fade-in-up">
+    <div class="d-flex align-items-start justify-content-between gap-3">
+        <div>
+            <div class="stat-label">@Model.Label</div>
+            <div class="stat-value mt-1">@Model.Value</div>
+            <div class="stat-hint @Model.HintColor mt-1">
+                <i class="bi bi-arrow-up-circle me-1"></i>@Model.Hint
+            </div>
+        </div>
+        <div class="stat-icon @Model.IconBg @Model.IconColor">
+            <i class="bi @Model.Icon"></i>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,17 @@
+@model AuctionMVC.ViewComponents.StatusFilterModel
+
+<div class="filter-pills">
+    @foreach (var item in Model.Items)
+    {
+        var isActive = string.Equals(item.Value, Model.CurrentValue, StringComparison.OrdinalIgnoreCase);
+        <a href="@(item.Url ?? $"{Model.BaseUrl}?status={item.Value}")"
+           class="filter-pill @(isActive ? "active" : "")">
+            @item.Label
+            @if (item.Count > 0)
+            {
+                <span class="ms-1 opacity-75">(@item.Count)</span>
+            }
+        </a>
+    }
+</div>
+

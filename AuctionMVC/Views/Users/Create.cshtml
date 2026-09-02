@@ -1,0 +1,73 @@
+@model UserFormViewModel
+@{
+    ViewData["Title"] = "إنشاء مستخدم";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "إنشاء مستخدم جديد",
+    Subtitle = "إضافة مستخدم جديد إلى المنصة",
+    Icon = "bi-person-plus"
+})
+
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <form asp-action="Create" method="post" novalidate class="card">
+            <div class="card-header">
+                <i class="bi bi-person me-2"></i>بيانات المستخدم
+            </div>
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 fs-8 mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="الاسم الكامل" />
+                        <span asp-validation-for="Name" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" dir="ltr" placeholder="05xxxxxxxx" />
+                        <span asp-validation-for="Phone" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" dir="ltr" placeholder="user@example.com" />
+                        <span asp-validation-for="Email" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" dir="ltr" type="password" />
+                        <div class="form-text">ستُخزن ككلمة مرور مشفّرة في النظام الخلفي.</div>
+                        <span asp-validation-for="Password" class="text-danger fs-8"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i>إنشاء المستخدم
+                    </button>
+                    <a asp-action="Index" class="btn btn-soft-secondary px-4">إلغاء</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="card">
+            <div class="card-header">ملاحظات</div>
+            <div class="card-body fs-8 text-muted">
+                <ul class="mb-0 ps-3">
+                    <li class="mb-2">البريد الإلكتروني يجب أن يكون فريداً.</li>
+                    <li class="mb-2">رقم الجوال بصيغة دولية أو محلية.</li>
+                    <li>الصلاحيات والدور (Admin / User) قيد التطوير في الـ API.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
