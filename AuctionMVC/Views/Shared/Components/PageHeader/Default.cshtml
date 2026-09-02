@@ -1,0 +1,31 @@
+@model AuctionMVC.ViewComponents.PageHeaderModel
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div class="d-flex align-items-center gap-2">
+        @if (!string.IsNullOrEmpty(Model.Icon))
+        {
+            <div class="stat-icon bg-soft-success text-primary" style="width:2.5rem;height:2.5rem">
+                <i class="bi @Model.Icon"></i>
+            </div>
+        }
+        <div>
+            <h5 class="fw-900 mb-0">@Model.Title</h5>
+            @if (!string.IsNullOrEmpty(Model.Subtitle))
+            {
+                <div class="text-muted fs-8">@Model.Subtitle</div>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ActionLabel) && !string.IsNullOrEmpty(Model.ActionUrl))
+    {
+        <a href="@Model.ActionUrl" class="btn btn-primary btn-sm px-3">
+            @if (!string.IsNullOrEmpty(Model.ActionIcon))
+            {
+                <i class="bi @Model.ActionIcon me-1"></i>
+            }
+            @Model.ActionLabel
+        </a>
+    }
+</div>
+

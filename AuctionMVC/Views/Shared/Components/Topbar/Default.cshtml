@@ -1,0 +1,46 @@
+@model AuctionMVC.ViewComponents.TopbarModel
+
+<div class="admin-topbar">
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-soft-secondary btn-sm d-lg-none" type="button" id="sidebarToggle" aria-label="فتح القائمة">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="topbar-title">
+            <small>لوحة التحكم</small>
+            <h6>@Model.PageTitle</h6>
+        </div>
+    </div>
+
+    <div class="topbar-actions">
+        <div class="topbar-search d-none d-md-flex">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control form-control-sm" id="globalSearch" placeholder="بحث في المزادات..." />
+        </div>
+
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="avatar-circle">@Model.UserInitials</span>
+                <span class="d-none d-md-block">
+                    <span class="d-block fw-bold fs-7 lh-1">@Model.UserName</span>
+                    @if (!string.IsNullOrEmpty(Model.UserEmail))
+                    {
+                        <span class="d-block fs-8 text-muted">@Model.UserEmail</span>
+                    }
+                </span>
+                <i class="bi bi-chevron-down text-muted fs-8"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+                <li><h6 class="dropdown-header fw-800">@Model.UserName</h6></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right me-2"></i>تسجيل الخروج
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+

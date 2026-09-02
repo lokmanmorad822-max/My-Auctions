@@ -1,0 +1,61 @@
+@model string?
+
+<div class="sidebar-brand">
+    <div class="brand-mark">م</div>
+    <div>
+        <div class="brand-text">منصة المزادات</div>
+        <div class="fs-8 opacity-50">لوحة التحكم</div>
+    </div>
+</div>
+
+<div class="sidebar-section-label">القائمة الرئيسية</div>
+<nav class="sidebar-nav">
+    <a class="sidebar-link" asp-area="" asp-controller="Dashboard" asp-action="Index" active-route>
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>لوحة التحكم</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Auctions" asp-action="Index" active-route>
+        <i class="bi bi-hammer"></i>
+        <span>المزادات</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Products" asp-action="Index" active-route>
+        <i class="bi bi-box-seam"></i>
+        <span>المنتجات</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Users" asp-action="Index" active-route>
+        <i class="bi bi-people"></i>
+        <span>المستخدمون</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Bids" asp-action="Index" active-route>
+        <i class="bi bi-cash-coin"></i>
+        <span>المزايدات</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Winners" asp-action="Index" active-route>
+        <i class="bi bi-trophy"></i>
+        <span>الفائزون</span>
+    </a>
+</nav>
+
+<div class="sidebar-section-label">الإدارة</div>
+<nav class="sidebar-nav">
+    <a class="sidebar-link" asp-area="" asp-controller="Categories" asp-action="Index" active-route>
+        <i class="bi bi-tags"></i>
+        <span>التصنيفات</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Auctions" asp-action="Index" asp-route-status="pending" active-route>
+        <i class="bi bi-shield-check"></i>
+        <span>مراجعة المزادات</span>
+        <span class="sidebar-badge">مراجعة</span>
+    </a>
+    <a class="sidebar-link" asp-area="" asp-controller="Home" asp-action="Index" active-route>
+        <i class="bi bi-gear"></i>
+        <span>الإعدادات</span>
+    </a>
+</nav>
+
+<div class="sidebar-footer">
+    <i class="bi bi-database me-1"></i> متصل بواجهة AuctionAPI
+    <br />
+    نسخة الإدارة 1.0.0
+</div>
+

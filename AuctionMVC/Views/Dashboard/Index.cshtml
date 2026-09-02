@@ -1,0 +1,176 @@
+@model DashboardIndexViewModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "لوحة التحكم",
+    Subtitle = "نظرة عامة على نشاط منصة المزادات",
+    Icon = "bi-grid-1x2-fill"
+})
+
+<!-- Stats row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        @await Component.InvokeAsync("StatCard", new AuctionMVC.ViewComponents.StatCardModel
+        {
+            Label = "إجمالي المزادات",
+            Value = Model.TotalAuctions.ToString("N0"),
+            Hint = $"{Model.ActiveAuctions} نشط حالياً",
+            Icon = "bi-hammer",
+            IconBg = "bg-soft-success",
+            IconColor = "text-primary"
+        })
+    </div>
+    <div class="col-6 col-xl-3">
+        @await Component.InvokeAsync("StatCard", new AuctionMVC.ViewComponents.StatCardModel
+        {
+            Label = "مزادات نشطة",
+            Value = Model.ActiveAuctions.ToString("N0"),
+            Hint = $"{Model.PendingAuctions} بانتظار المراجعة",
+            Icon = "bi-lightning-charge-fill",
+            IconBg = "bg-soft-warning",
+            IconColor = "text-gold",
+            HintColor = "text-gold"
+        })
+    </div>
+    <div class="col-6 col-xl-3">
+        @await Component.InvokeAsync("StatCard", new AuctionMVC.ViewComponents.StatCardModel
+        {
+            Label = "إجمالي المزايدات",
+            Value = Model.TotalBids.ToString("N0"),
+            Hint = $"{Model.TotalWinners} مزاد محسوم",
+            Icon = "bi-cash-coin",
+            IconBg = "bg-soft-secondary",
+            IconColor = "text-muted",
+            HintColor = "text-muted"
+        })
+    </div>
+    <div class="col-6 col-xl-3">
+        @await Component.InvokeAsync("StatCard", new AuctionMVC.ViewComponents.StatCardModel
+        {
+            Label = "المستخدمون",
+            Value = Model.TotalUsers.ToString("N0"),
+            Hint = $"{Model.TotalProducts} منتج",
+            Icon = "bi-people",
+            IconBg = "bg-soft-danger",
+            IconColor = "text-danger",
+            HintColor = "text-danger"
+        })
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Recent auctions -->
+    <div class="col-12 col-xl-8">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span>آخر المزادات</span>
+                <a asp-controller="Auctions" asp-action="Index" class="btn btn-link btn-sm text-primary text-decoration-none p-0">
+                    عرض الكل <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>السعر الحالي</th>
+                                <th>المزايدات</th>
+                                <th>الحالة</th>
+                                <th>ينتهي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentAuctions.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state py-4">
+                                            <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                                            <h6>لا توجد مزادات بعد</h6>
+                                            <p>ابدأ بإنشاء أول مزاد من صفحة المزادات.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var a in Model.RecentAuctions)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">
+                                            <a asp-controller="Auctions" asp-action="Details" asp-route-id="@a.Id" class="text-decoration-none">
+                                                @a.ProductName
+                                            </a>
+                                        </td>
+                                        <td class="fw-bold text-primary">
+                                            <currency amount="@a.CurrentPrice" />
+                                        </td>
+                                        <td><span class="badge bg-soft-secondary">@a.BidCount</span></td>
+                                        <td><status-badge status="@a.Status" /></td>
+                                        <td class="text-muted fs-8" data-countdown="@a.EndDate.ToString("o")">@a.EndDate.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top auction -->
+    <div class="col-12 col-xl-4">
+        <div class="card h-100">
+            <div class="card-header">أعلى مزاد</div>
+            <div class="card-body">
+                @if (Model.TopAuction is not null)
+                {
+                    <div class="gradient-card mb-3">
+                        <div class="fs-7 text-muted">@Model.TopAuction.ProductName</div>
+                        <div class="h3 fw-900 text-primary mt-2 mb-1">
+                            <currency amount="@Model.TopAuction.CurrentPrice" />
+                        </div>
+                        <div class="fs-8 text-muted">@Model.TopAuction.BidCount مزايدة</div>
+                    </div>
+                    <a asp-controller="Auctions" asp-action="Details" asp-route-id="@Model.TopAuction.Id" class="btn btn-soft-secondary w-100 btn-sm">
+                        <i class="bi bi-eye me-1"></i>عرض التفاصيل
+                    </a>
+                }
+                else
+                {
+                    <div class="empty-state py-4">
+                        <div class="empty-icon"><i class="bi bi-trophy"></i></div>
+                        <h6>لا يوجد مزاد نشط</h6>
+                        <p>ستظهر أعلى المزادات النشطة هنا.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly chart -->
+<div class="row g-4 mt-1">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">المزادات خلال الأشهر الستة الأخيرة</div>
+            <div class="card-body">
+                <div style="height: 280px">
+                    <canvas id="monthlyAuctionsChart"
+                            data-labels='@System.Text.Json.JsonSerializer.Serialize(Model.MonthlySeries.Select(m => m.Label))'
+                            data-values='@System.Text.Json.JsonSerializer.Serialize(Model.MonthlySeries.Select(m => m.Count))'></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}
+

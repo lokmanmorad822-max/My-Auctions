@@ -1,0 +1,79 @@
+@model ProductFormViewModel
+@{
+    ViewData["Title"] = "إنشاء منتج";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "إنشاء منتج جديد",
+    Subtitle = "إضافة منتج جديد إلى المنصة",
+    Icon = "bi-plus-circle"
+})
+
+<div class="row g-4">
+    <div class="col-12 col-xl-8">
+        <form asp-action="Create" method="post" novalidate class="card">
+            <div class="card-header">
+                <i class="bi bi-box-seam me-2"></i>معلومات المنتج
+            </div>
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 fs-8 mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" placeholder="مثال: ساعة رولكس ديت جست" />
+                        <span asp-validation-for="Name" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Category" class="form-label"></label>
+                        <input asp-for="Category" class="form-control" list="categoryList" placeholder="اختر أو اكتب تصنيفاً" />
+                        <datalist id="categoryList">
+                            @foreach (var cat in Model.AvailableCategories)
+                            {
+                                <option value="@cat"></option>
+                            }
+                        </datalist>
+                        <span asp-validation-for="Category" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="اكتب وصفاً تفصيلياً للمنتج..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger fs-8"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Images" class="form-label"></label>
+                        <input asp-for="Images" class="form-control" dir="ltr" placeholder="https://example.com/image.jpg, https://example.com/2.jpg" />
+                        <div class="form-text">روابط الصور مفصولة بفواصل (تصل إلى 1000 حرف).</div>
+                        <span asp-validation-for="Images" class="text-danger fs-8"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i>حفظ المنتج
+                    </button>
+                    <a asp-action="Index" class="btn btn-soft-secondary px-4">إلغاء</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="card">
+            <div class="card-header">ملاحظات</div>
+            <div class="card-body fs-8 text-muted">
+                <ul class="mb-0 ps-3">
+                    <li class="mb-2">يُستخدم اسم المنتج في شاشات المزادات والبحث.</li>
+                    <li class="mb-2">يمكن استخدام التصنيفات نفسها عبر عدة منتجات.</li>
+                    <li>لا يمكن إنشاء مزاد بدون منتج مرتبط به.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

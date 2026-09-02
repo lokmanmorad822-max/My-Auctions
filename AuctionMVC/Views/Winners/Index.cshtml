@@ -1,0 +1,98 @@
+@model WinnerIndexViewModel
+@{
+    ViewData["Title"] = "الفائزون";
+}
+
+@await Component.InvokeAsync("PageHeader", new AuctionMVC.ViewComponents.PageHeaderModel
+{
+    Title = "الفائزون",
+    Subtitle = "الفائزون بالمزادات المنتهية",
+    Icon = "bi-trophy"
+})
+
+<div class="text-muted fs-7 mb-3">
+    إجمالي سجلات الفوز: <span class="fw-800">@Model.TotalCount.ToString("N0")</span>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover admin-datatable mb-0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>الفائز</th>
+                        <th>المزاد</th>
+                        <th>السعر النهائي</th>
+                        <th class="no-sort">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon"><i class="bi bi-trophy"></i></div>
+                                    <h6>لا توجد نتائج فوز</h6>
+                                    <p>لم يتم تحديد فائزين بعد. يُحدَّد الفائز عند انتهاء المزاد.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-circle" style="width:2rem;height:2rem;font-size:0.7rem">@item.WinnerInitials</div>
+                                        <span class="fw-bold">@item.WinnerName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a asp-controller="Auctions" asp-action="Details" asp-route-id="@item.AuctionId"
+                                       class="text-decoration-none">
+                                        @item.AuctionProductName
+                                    </a>
+                                    <div class="fs-8 text-muted" dir="ltr">@item.AuctionId</div>
+                                </td>
+                                <td class="fw-bold text-primary"><currency amount="@item.FinalPrice" /></td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-soft-danger btn-sm px-2 py-1"
+                                            title="حذف السجل"
+                                            data-confirm-action="@Url.Action("Delete", "Winners", new { id = item.Id })"
+                                            data-confirm-method="POST"
+                                            data-confirm-title="حذف سجل الفائز؟"
+                                            data-confirm-message="سيتم حذف سجل الفوز نهائياً."
+                                            data-confirm-icon="bi-trash"
+                                            data-confirm-variant="danger"
+                                            data-confirm-text="حذف نهائي"
+                                            data-confirm-require-text="حذف">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var hasData = @(Model.Items.Count > 0 ? "true" : "false");
+            if (!hasData) return;
+
+            AuctionDataTables.init(".admin-datatable", {
+                columnDefs: [{ targets: "no-sort", orderable: false }],
+                order: [[2, "desc"]]
+            });
+        })();
+    </script>
+}
+
